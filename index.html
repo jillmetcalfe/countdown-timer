@@ -36,12 +36,12 @@
 <body>
     <div class="countdown-container" data-minutes="10">
         <div class="countdown">
-            <svg class="circle" id="circle_minute" viewBox="42 52 115 115" xmlns="http://www.w3.org/2000/svg">
+            <svg class="circle" id="circle_minute" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                 <g>
-                    <circle r="40" cx="100" cy="100" fill="transparent"></circle>
-                    <path fill="none" stroke-linecap="round" stroke-width="2" stroke="#ddd" stroke-dasharray="250,250" d="M100 60 A1 1 0 0 1 100 140 A1 1 0 0 1 100 60"></path>
-                    <path class="circle-green" fill="none" stroke-linecap="round" stroke="#009B9D" stroke-dasharray="0,252" stroke-width="3" d="M100 60 A1 1 0 0 1 100 140 A1 1 0 0 1 100 60"></path>
-                    <text class="js_lw_timer_show" text-anchor="middle" x="100" y="115" font-size="45px" font-weight="400" fill="#344154">0</text>
+                    <circle r="80" cx="100" cy="100" fill="transparent"></circle>
+                    <path fill="none" stroke-linecap="round" stroke-width="4" stroke="#ddd" stroke-dasharray="502,502" d="M100 20 A80 80 0 0 1 100 180 A80 80 0 0 1 100 20"></path>
+                    <path class="circle-green" fill="none" stroke-linecap="round" stroke="#009B9D" stroke-dasharray="0,502" stroke-width="6" d="M100 20 A80 80 0 0 1 100 180 A80 80 0 0 1 100 20"></path>
+                    <text class="js_lw_timer_show" text-anchor="middle" x="100" y="120" font-size="60px" font-weight="400" fill="#344154">0</text>
                 </g>
             </svg>
         </div>
@@ -75,7 +75,7 @@
             function updateCircle(circleId, value, maxValue) {
                 const circle = document.querySelector(`#${circleId} .circle-green`);
                 const percentage = maxValue ? value / maxValue : 0;
-                const dashArray = 252;
+                const dashArray = 502; // Circumference of circle (2 * π * 80 ≈ 502)
                 const dashOffset = dashArray * (1 - percentage);
                 circle.setAttribute('stroke-dasharray', `${dashOffset},${dashArray}`);
             }
