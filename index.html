@@ -123,11 +123,12 @@
         let endTime = null;
         let timer = null;
         let isRunning = false;
+        let timeLeft = 0;
 
         const updateCountdown = () => {
             if (!isRunning) return;
             const now = new Date().getTime();
-            const timeLeft = endTime - now;
+            timeLeft = endTime - now;
 
             if (timeLeft <= 0) {
                 console.log("Countdown finished");
@@ -162,21 +163,28 @@
             console.log(`Updated ${circleId}: dasharray=${dashOffset},${dashArray}`);
         }
 
-        function startTimer() {
-            if (isRunning) return;
-            console.log("Starting timer");
-            if (!endTime) {
-                endTime = new Date().getTime() + durationMs;
+           function startTimer() {
+                if (isRunning) return;
+                console.log("Starting timer");
+                if (!endTime) {
+                    durationMinutes = parseInt(minutesInput.value) || 5;
+                    durationSeconds = durationMinutes * 60;
+                    durationMs = durationSeconds * 1000;
+                    timeLeft = durationMs;
+                }
+                endTime = new Date().getTime() + timeLeft;
+                isRunning = true;
+                timer = setInterval(updateCountdown, 1000);
+                updateCountdown();
             }
-            isRunning = true;
-            timer = setInterval(updateCountdown, 1000);
-            updateCountdown();
-        }
 
-        function stopTimer() {
+       function stopTimer() {
             console.log("Stopping timer");
             clearInterval(timer);
             isRunning = false;
+            const now = new Date().getTime();
+            timeLeft = endTime - now;
+            endTime = null;
         }
 
         function resetTimer() {
