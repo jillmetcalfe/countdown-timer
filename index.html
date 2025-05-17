@@ -17,7 +17,7 @@
         .countdown-container {
             text-align: center;
             width: 220px;
-            height: 220px;
+            height: 270px;
             padding: 10px;
             box-sizing: border-box;
         }
@@ -37,6 +37,24 @@
         .js_lw_timer_show {
             fill: #344154;
         }
+        .controls {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .controls button {
+            padding: 5px 10px;
+            font-size: 14px;
+            border: 1px solid #344154;
+            background-color: white;
+            color: #344154;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        .controls button:hover {
+            background-color: #f0f0f0;
+        }
     </style>
 </head>
 <body>
@@ -48,56 +66,95 @@
                 <text class="js_lw_timer_show" text-anchor="middle" x="50" y="58" font-size="24px" font-weight="400" fill="#344154">5:00</text>
             </svg>
         </div>
+         <div class="controls">
+            <button id="startBtn">Start</button>
+            <button id="stopBtn">Stop</button>
+            <button id="resetBtn">Reset</button>
+        </div>
     </div>
     <script>
-        (function () {
-            console.log("Countdown script started");
-            const container = document.querySelector('.countdown-container');
-            const durationMinutes = parseInt(container.getAttribute('data-minutes')) || 5;
-            const durationSeconds = durationMinutes * 60;
-            const durationMs = durationSeconds * 1000;
-            console.log("Duration set to", durationMinutes, "minutes (", durationSeconds, "seconds)");
+    (function () {
+        console.log("Countdown script started");
+        const container = document.querySelector('.countdown-container');
+        const durationMinutes = parseInt(container.getAttribute('data-minutes')) || 5;
+        const durationSeconds = durationMinutes * 60;
+        const durationMs = durationSeconds * 1000;
+        console.log("Duration set to", durationMinutes, "minutes (", durationSeconds, "seconds)");
 
-            const startTime = new Date().getTime();
-            const endTime = startTime + durationMs;
+        let endTime = null;
+        let timer = null;
+        let isRunning = false;
 
-            const updateCountdown = () => {
-                const now = new Date().getTime();
-                const timeLeft = endTime - now;
+        const updateCountdown = () => {
+            if (!isRunning) return;
+            const now = new Date().getTime();
+            const timeLeft = endTime - now;
 
-                if (timeLeft <= 0) {
-                    console.log("Countdown finished");
-                    updateCircle('circle_minute', 0, 0);
-                    document.querySelector('#circle_minute .js_lw_timer_show').textContent = '0:00';
-                    clearInterval(timer);
-                    return;
-                }
-
-                const totalSeconds = Math.floor(timeLeft / 1000);
-                const minutes = Math.floor(totalSeconds / 60);
-                const seconds = totalSeconds % 60;
-                const formattedTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                console.log("Time remaining:", formattedTime);
-
-                updateCircle('circle_minute', totalSeconds, durationSeconds);
-                document.querySelector('#circle_minute .js_lw_timer_show').textContent = formattedTime;
-            };
-
-            function updateCircle(circleId, value, maxValue) {
-                const circle = document.querySelector(`#${circleId} .circle-green`);
-                if (!circle) {
-                    console.error("Circle element not found for ID:", circleId);
-                    return;
-                }
-                const percentage = maxValue ? value / maxValue : 0;
-                const dashArray = 283; // Circumference = 2 * π * 45 ≈ 283
-                const dashOffset = dashArray * (1 - percentage);
-                circle.setAttribute('stroke-dasharray', `${dashOffset},${dashArray}`);
-                console.log(`Updated ${circleId}: dasharray=${dashOffset},${dashArray}`);
+            if (timeLeft <= 0) {
+                console.log("Countdown finished");
+                updateCircle('circle_minute', 0, 0);
+                document.querySelector('#circle_minute .js_lw_timer_show').textContent = '0:00';
+                clearInterval(timer);
+                isRunning = false;
+                return;
             }
 
+            const totalSeconds = Math.floor(timeLeft / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            const formattedTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            console.log("Time remaining:", formattedTime);
+
+            updateCircle('circle_minute', totalSeconds, durationSeconds);
+            document.querySelector('#circle_minute .js_lw_timer_show').textContent = formattedTime;
+        };
+
+        function updateCircle(circleId, value, maxValue) {
+            const circle = document.querySelector(`#${circleId} .circle-green`);
+            if (!circle) {
+                console.error("Circle element not found for ID:", circleId);
+                return;
+            }
+            const percentage = maxValue ? value / maxValue : 0;
+            const dashArray = 283;
+            const dashOffset = dashArray * (1 - percentage);
+            circle.setAttribute('stroke-dasharray', `${dashOffset},${dashArray}`);
+            console.log(`Updated ${circleId}: dasharray=${dashOffset},${dashArray}`);
+        }
+
+        function startTimer() {
+            if (isRunning) return;
+            console.log("Starting timer");
+            if (!endTime) {
+                endTime = new Date().getTime() + durationMs;
+            }
+            isRunning = true;
+            timer = setInterval(updateCountdown, 1000);
             updateCountdown();
-            const timer = setInterval(updateCountdown, 1000);
-        })();
-    </script>
+        }
+
+        function stopTimer() {
+            console.log("Stopping timer");
+            clearInterval(timer);
+            isRunning = false;
+        }
+
+        function resetTimer() {
+            console.log("Resetting timer");
+            clearInterval(timer);
+            isRunning = false;
+            endTime = null;
+            document.querySelector('#circle_minute .js_lw_timer_show').textContent = '5:00';
+            updateCircle('circle_minute', durationSeconds, durationSeconds);
+        }
+
+        document.querySelector('#startBtn').addEventListener('click', startTimer);
+        document.querySelector('#stopBtn').addEventListener('click', stopTimer);
+        document.querySelector('#resetBtn').addEventListener('click', resetTimer);
+
+        // Initialize timer display
+        document.querySelector('#circle_minute .js_lw_timer_show').textContent = '5:00';
+        updateCircle('circle_minute', durationSeconds, durationSeconds);
+    })();
+</script>
 </ Турі>
