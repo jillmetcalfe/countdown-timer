@@ -56,23 +56,27 @@
         .controls button:hover {
             transform: scale(1.1);
         }
-        .input-group {
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-        }
-        .input-group label {
-            font-size: 14px;
-            color: #344154;
-        }
-        .input-group input {
-            width: 60px;
-            padding: 3px;
-            font-size: 14px;
-            border: 1px solid #344154;
-            border-radius: 3px;
-        }
+     .input-group {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center; /* Center vertically */
+    justify-content: center;
+    gap: 5px; /* Slightly larger gap for clarity */
+}
+.input-group label {
+    font-size: 14px;
+    color: #344154;
+    line-height: 24px; /* Match input height */
+}
+.input-group input {
+    width: 60px;
+    height: 24px;
+    padding: 3px;
+    font-size: 14px;
+    border: 1px solid #344154;
+    border-radius: 3px;
+    box-sizing: border-box;
+}
     </style>
 </head>
 <body>
@@ -108,11 +112,12 @@
     (function () {
         console.log("Countdown script started");
         const minutesInput = document.querySelector('#minutesInput');
-        const colorInput = document.querySelector('#colorInput');
-        const ring = document.querySelector('#circle_minute .circle-green');
+      
         let durationMinutes = parseInt(minutesInput.value) || 5;
         let durationSeconds = durationMinutes * 60;
         let durationMs = durationSeconds * 1000;
+        const colorInput = document.querySelector('#colorInput');
+        const ring = document.querySelector('#circle_minute .circle-green');
         console.log("Duration set to", durationMinutes, "minutes (", durationSeconds, "seconds)");
 
         let endTime = null;
