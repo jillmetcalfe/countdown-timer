@@ -23,7 +23,8 @@
             justify-content: center;
         }
         .circle {
-            margin: 0;
+            width: 200px;
+            height: 200px;
         }
         .circle-green {
             stroke: #009B9D;
@@ -36,21 +37,20 @@
 <body>
     <div class="countdown-container" data-minutes="10">
         <div class="countdown">
-            <svg class="circle" id="circle_minute" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                <g>
-                    <circle r="80" cx="100" cy="100" fill="transparent"></circle>
-                    <path fill="none" stroke-linecap="round" stroke-width="4" stroke="#ddd" stroke-dasharray="502,502" d="M100 20 A80 80 0 0 1 100 180 A80 80 0 0 1 100 20"></path>
-                    <path class="circle-green" fill="none" stroke-linecap="round" stroke="#009B9D" stroke-dasharray="0,502" stroke-width="6" d="M100 20 A80 80 0 0 1 100 180 A80 80 0 0 1 100 20"></path>
-                    <text class="js_lw_timer_show" text-anchor="middle" x="100" y="120" font-size="60px" font-weight="400" fill="#344154">0</text>
-                </g>
+            <svg class="circle" id="circle_minute" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <circle r="45" cx="50" cy="50" fill="transparent" stroke="#ddd" stroke-width="4"/>
+                <circle class="circle-green" r="45" cx="50" cy="50" fill="none" stroke="#009B9D" stroke-width="5" stroke-dasharray="0,283"/>
+                <text class="js_lw_timer_show" text-anchor="middle" x="50" y="58" font-size="30px" font-weight="400" fill="#344154">0</text>
             </svg>
         </div>
     </div>
     <script>
         (function () {
+            console.log("Countdown script started");
             const container = document.querySelector('.countdown-container');
             const durationMinutes = parseInt(container.getAttribute('data-minutes')) || 10;
             const durationMs = durationMinutes * 60 * 1000;
+            console.log("Duration set to", durationMinutes, "minutes");
 
             const startTime = new Date().getTime();
             const endTime = startTime + durationMs;
@@ -60,6 +60,7 @@
                 const timeLeft = endTime - now;
 
                 if (timeLeft <= 0) {
+                    console.log("Countdown finished");
                     updateCircle('circle_minute', 0, 0);
                     document.querySelector('#circle_minute .js_lw_timer_show').textContent = '0';
                     clearInterval(timer);
@@ -67,6 +68,7 @@
                 }
 
                 const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                console.log("Minutes remaining:", minutes);
 
                 updateCircle('circle_minute', minutes, durationMinutes);
                 document.querySelector('#circle_minute .js_lw_timer_show').textContent = minutes;
@@ -75,9 +77,10 @@
             function updateCircle(circleId, value, maxValue) {
                 const circle = document.querySelector(`#${circleId} .circle-green`);
                 const percentage = maxValue ? value / maxValue : 0;
-                const dashArray = 502; // Circumference of circle (2 * π * 80 ≈ 502)
+                const dashArray = 283; // Circumference = 2 * π * 45 ≈ 283
                 const dashOffset = dashArray * (1 - percentage);
                 circle.setAttribute('stroke-dasharray', `${dashOffset},${dashArray}`);
+                console.log(`Updated ${circleId}: dasharray=${dashOffset},${dashArray}`);
             }
 
             updateCountdown();
