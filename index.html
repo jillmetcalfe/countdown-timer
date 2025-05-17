@@ -56,39 +56,10 @@
         .controls button:hover {
             transform: scale(1.1);
         }
-     .input-group {
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center; /* Center vertically */
-    justify-content: center;
-    gap: 5px; /* Slightly larger gap for clarity */
-}
-.input-group label {
-    font-size: 14px;
-    color: #344154;
-    line-height: 24px; /* Match input height */
-}
-.input-group input {
-    width: 60px;
-    height: 24px;
-    padding: 3px;
-    font-size: 14px;
-    border: 1px solid #344154;
-    border-radius: 3px;
-    box-sizing: border-box;
-}
     </style>
 </head>
 <body>
-    <div class="countdown-container">
-        <div class="input-group">
-            <label for="minutesInput">Minutes: </label>
-            <input type="number" id="minutesInput" value="5" min="1" max="60">
-        </div> 
-        <div class="input-group">
-            <label for="colorInput">Ring Color: </label>
-            <input type="color" id="colorInput" value="#009B9D">
-        </div>
+    <div class="countdown-container" data-minutes="5">
         <div class="countdown">
             <svg class="circle" id="circle_minute" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                 <circle r="45" cx="50" cy="50" fill="transparent" stroke="#ddd" stroke-width="4"/>
@@ -111,24 +82,20 @@
     <script>
     (function () {
         console.log("Countdown script started");
-        const minutesInput = document.querySelector('#minutesInput');
-      
-        let durationMinutes = parseInt(minutesInput.value) || 5;
-        let durationSeconds = durationMinutes * 60;
-        let durationMs = durationSeconds * 1000;
-        const colorInput = document.querySelector('#colorInput');
-        const ring = document.querySelector('#circle_minute .circle-green');
+        const container = document.querySelector('.countdown-container');
+        const durationMinutes = parseInt(container.getAttribute('data-minutes')) || 5;
+        const durationSeconds = durationMinutes * 60;
+        const durationMs = durationSeconds * 1000;
         console.log("Duration set to", durationMinutes, "minutes (", durationSeconds, "seconds)");
 
         let endTime = null;
         let timer = null;
         let isRunning = false;
-        let timeLeft = 0;
 
         const updateCountdown = () => {
             if (!isRunning) return;
             const now = new Date().getTime();
-            timeLeft = endTime - now;
+            const timeLeft = endTime - now;
 
             if (timeLeft <= 0) {
                 console.log("Countdown finished");
@@ -158,33 +125,25 @@
             const percentage = maxValue ? value / maxValue : 0;
             const dashArray = 283;
             const dashOffset = dashArray * (1 - percentage);
-            circle.setAttribute('stroke', colorInput.value);
             circle.setAttribute('stroke-dasharray', `${dashOffset},${dashArray}`);
             console.log(`Updated ${circleId}: dasharray=${dashOffset},${dashArray}`);
         }
 
-           function startTimer() {
-                if (isRunning) return;
-                console.log("Starting timer");
-                if (!endTime) {
-                    durationMinutes = parseInt(minutesInput.value) || 5;
-                    durationSeconds = durationMinutes * 60;
-                    durationMs = durationSeconds * 1000;
-                    timeLeft = durationMs;
-                }
-                endTime = new Date().getTime() + timeLeft;
-                isRunning = true;
-                timer = setInterval(updateCountdown, 1000);
-                updateCountdown();
+        function startTimer() {
+            if (isRunning) return;
+            console.log("Starting timer");
+            if (!endTime) {
+                endTime = new Date().getTime() + durationMs;
             }
+            isRunning = true;
+            timer = setInterval(updateCountdown, 1000);
+            updateCountdown();
+        }
 
-       function stopTimer() {
+        function stopTimer() {
             console.log("Stopping timer");
             clearInterval(timer);
             isRunning = false;
-            const now = new Date().getTime();
-            timeLeft = endTime - now;
-            endTime = null;
         }
 
         function resetTimer() {
@@ -193,23 +152,15 @@
             isRunning = false;
             endTime = null;
             document.querySelector('#circle_minute .js_lw_timer_show').textContent = '5:00';
-            ring.setAttribute('stroke', colorInput.value);
             updateCircle('circle_minute', durationSeconds, durationSeconds);
         }
 
         document.querySelector('#startBtn').addEventListener('click', startTimer);
         document.querySelector('#stopBtn').addEventListener('click', stopTimer);
         document.querySelector('#resetBtn').addEventListener('click', resetTimer);
-        colorInput.addEventListener('input', () => {
-            ring.setAttribute('stroke', colorInput.value);
-        }); 
 
         // Initialize timer display
-        durationMinutes = parseInt(minutesInput.value) || 5;
-        durationSeconds = durationMinutes * 60;
-        durationMs = durationSeconds * 1000;
-        const formattedTime = `${durationMinutes}:${'00'}`;
-        document.querySelector('#circle_minute .js_lw_timer_show').textContent = formattedTime;
+        document.querySelector('#circle_minute .js_lw_timer_show').textContent = '5:00';
         updateCircle('circle_minute', durationSeconds, durationSeconds);
     })();
 </script>
