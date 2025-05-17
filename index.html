@@ -16,11 +16,17 @@
         }
         .countdown-container {
             text-align: center;
-            padding: 20px;
+            width: 220px; /* Explicit width to accommodate SVG + padding */
+            height: 220px; /* Explicit height */
+            padding: 10px;
+            border: 2px solid red; /* Temporary border to visualize container */
+            box-sizing: border-box;
         }
         .countdown {
             display: flex;
             justify-content: center;
+            width: 200px;
+            height: 200px;
         }
         .circle {
             width: 200px;
@@ -76,6 +82,10 @@
 
             function updateCircle(circleId, value, maxValue) {
                 const circle = document.querySelector(`#${circleId} .circle-green`);
+                if (!circle) {
+                    console.error("Circle element not found for ID:", circleId);
+                    return;
+                }
                 const percentage = maxValue ? value / maxValue : 0;
                 const dashArray = 283; // Circumference = 2 * π * 45 ≈ 283
                 const dashOffset = dashArray * (1 - percentage);
